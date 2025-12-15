@@ -1,5 +1,5 @@
 --====================================
--- MR_Yete HUB | PREMIUM KEY LOADER
+-- MR_Yete HUB | KEY SYSTEM
 --====================================
 
 -- SERVICES
@@ -10,7 +10,7 @@ local Lighting = game:GetService("Lighting")
 
 local player = Players.LocalPlayer
 
--- SAFE GUI PARENT
+-- GUI PARENT SEGURO
 local GuiParent
 pcall(function() GuiParent = gethui() end)
 if not GuiParent then GuiParent = game:GetService("CoreGui") end
@@ -19,18 +19,20 @@ if not GuiParent then GuiParent = game:GetService("CoreGui") end
 local Blur = Instance.new("BlurEffect", Lighting)
 Blur.Size = 0
 
--- SCRIPT REAL
+-- URL SCRIPT REAL
 local MAIN_URL = "https://raw.githubusercontent.com/franciscofranciscojrmy-bit/MrYeteHUB/main/main.lua"
 
--- KEYS
+-- KEYS VÁLIDAS
 local VALID_KEYS = {
 	"MRYETE-2025-ALPHA",
 	"MRYETE-DEV-ACCESS"
 }
 
-local function isValidKey(k)
+local function isValidKey(key)
 	for _,v in ipairs(VALID_KEYS) do
-		if k == v then return true end
+		if key == v then
+			return true
+		end
 	end
 	return false
 end
@@ -39,18 +41,17 @@ end
 -- GUI
 --====================================
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "MR_Yete_KeySystem"
+ScreenGui.Name = "MRYete_KeySystem"
 ScreenGui.DisplayOrder = 999999
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = GuiParent
 
 local Main = Instance.new("Frame", ScreenGui)
-Main.Size = UDim2.new(0,380,0,240)
-Main.Position = UDim2.new(0.5,-190,0.5,-120)
+Main.Size = UDim2.new(0,380,0,260)
+Main.Position = UDim2.new(0.5,-190,0.5,-130)
 Main.BackgroundTransparency = 1
 Main.Active = true
 Main.ZIndex = 10
-Main.Visible = true
 Instance.new("UICorner", Main).CornerRadius = UDim.new(0,16)
 
 local UIScale = Instance.new("UIScale", Main)
@@ -93,21 +94,33 @@ task.spawn(function()
 	end
 end)
 
--- TITLE
+-- TITLE PRINCIPAL
 local Title = Instance.new("TextLabel", Main)
-Title.Size = UDim2.new(1,0,46,0)
-Title.Text = "MR_Yete HUB"
-Title.Font = Enum.Font.GothamBold
-Title.TextSize = 24
-Title.TextColor3 = Color3.fromRGB(190,120,255)
+Title.Size = UDim2.new(1,0,40,0)
+Title.Position = UDim2.new(0,0,0,10)
+Title.Text = "MRYETE Key System"
+Title.Font = Enum.Font.GothamBlack
+Title.TextSize = 26
+Title.TextColor3 = Color3.fromRGB(200,130,255)
 Title.BackgroundTransparency = 1
 Title.ZIndex = 20
 
--- INPUT
+-- SUB TEXTO
+local Sub = Instance.new("TextLabel", Main)
+Sub.Size = UDim2.new(1,0,26,0)
+Sub.Position = UDim2.new(0,0,0,48)
+Sub.Text = "Introduce tu clave para continuar"
+Sub.Font = Enum.Font.Gotham
+Sub.TextSize = 15
+Sub.TextColor3 = Color3.fromRGB(200,200,200)
+Sub.BackgroundTransparency = 1
+Sub.ZIndex = 20
+
+-- INPUT KEY
 local Input = Instance.new("TextBox", Main)
 Input.Size = UDim2.new(0,280,0,42)
-Input.Position = UDim2.new(0.5,-140,0.5,-18)
-Input.PlaceholderText = "Introduce tu KEY"
+Input.Position = UDim2.new(0.5,-140,0.5,-10)
+Input.PlaceholderText = "KEY AQUÍ"
 Input.Font = Enum.Font.Gotham
 Input.TextSize = 18
 Input.TextColor3 = Color3.new(1,1,1)
@@ -115,10 +128,10 @@ Input.BackgroundColor3 = Color3.fromRGB(35,35,50)
 Input.ZIndex = 20
 Instance.new("UICorner", Input).CornerRadius = UDim.new(0,10)
 
--- BUTTON
+-- BOTÓN VERIFY
 local Button = Instance.new("TextButton", Main)
 Button.Size = UDim2.new(0,160,0,44)
-Button.Position = UDim2.new(0.5,-80,1,-60)
+Button.Position = UDim2.new(0.5,-80,1,-62)
 Button.Text = "VERIFY"
 Button.Font = Enum.Font.GothamBold
 Button.TextSize = 18
@@ -134,7 +147,7 @@ ButtonGlow.Transparency = 0.2
 
 -- STATUS
 local Status = Instance.new("TextLabel", Main)
-Status.Size = UDim2.new(1,0,30,0)
+Status.Size = UDim2.new(1,0,26,0)
 Status.Position = UDim2.new(0,0,0.72,0)
 Status.Text = ""
 Status.Font = Enum.Font.GothamBold
@@ -190,7 +203,7 @@ end
 TweenService:Create(UIScale,TweenInfo.new(0.6,Enum.EasingStyle.Back),{Scale=1}):Play()
 TweenService:Create(Blur,TweenInfo.new(0.5),{Size=12}):Play()
 
--- LOGIC
+-- VERIFY
 Button.MouseButton1Click:Connect(function()
 	if isValidKey(Input.Text) then
 		Status.TextColor3 = Color3.fromRGB(80,255,120)
