@@ -25,7 +25,8 @@ local MAIN_URL = "https://raw.githubusercontent.com/franciscofranciscojrmy-bit/M
 -- KEYS VALIDAS
 local VALID_KEYS = {
 	"MRYETE-2025-ALPHA",
-	"MRYETE-DEV-ACCESS"
+	"MRYETE-DEV-ACCESS",
+	"MRYETE-PREMIUM-KEYS"
 }
 
 local MAX_ATTEMPTS = 3
