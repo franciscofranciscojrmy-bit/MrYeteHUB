@@ -27,9 +27,9 @@ local LocalPlayer = Players.LocalPlayer
 
 -- KEYS LIGADAS A USERID
 local VALID_KEYS = {
-	["MRYETE-2025-ALPHA"] = 123456789, -- UserId permitido
-	["MRYETE-DEV-ACCESS"] = 987654321,
-	["MRYETE-PREMIUM-KEYS"] = 555666777
+	["MRYETE-2025-ALPHA"] = 707706080, -- UserId permitido
+	["MRYETE-DEV-ACCESS"] = 707706080,
+	["MRYETE-PREMIUM-KEYS"] = 123
 }
 
 local MAX_ATTEMPTS = 3
