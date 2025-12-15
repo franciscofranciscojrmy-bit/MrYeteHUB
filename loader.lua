@@ -1,12 +1,13 @@
---==============================
--- MRYETE KEY SYSTEM LOADER
---==============================
+--====================================
+-- MRYETE KEY SYSTEM (FIXED)
+--====================================
 
+-- SERVICES
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
-local RunService = game:GetService("RunService")
 
+-- GUI PARENT (compatible con la mayoría de executors)
 local GuiParent
 pcall(function() GuiParent = gethui() end)
 if not GuiParent then
@@ -17,14 +18,21 @@ end
 local Blur = Instance.new("BlurEffect", Lighting)
 Blur.Size = 0
 
--- CONFIG
-local MAIN_SCRIPT_URL =
-"https://raw.githubusercontent.com/franciscofranciscojrmy-bit/MrYeteHUB/main/main.lua"
+-- SCRIPT REAL
+local MAIN_URL = "https://raw.githubusercontent.com/franciscofranciscojrmy-bit/MrYeteHUB/main/main.lua"
 
+-- KEYS VALIDAS
 local VALID_KEYS = {
 	"MRYETE-2025-ALPHA",
 	"MRYETE-DEV-ACCESS"
 }
+
+local function isValidKey(key)
+	for _,v in ipairs(VALID_KEYS) do
+		if key == v then return true end
+	end
+	return false
+end
 
 -- GUI
 local ScreenGui = Instance.new("ScreenGui", GuiParent)
@@ -35,13 +43,12 @@ local Frame = Instance.new("Frame", ScreenGui)
 Frame.Size = UDim2.new(0,420,0,300)
 Frame.Position = UDim2.new(0.5,-210,0.5,-150)
 Frame.BackgroundTransparency = 1
-Frame.Active = true
 Instance.new("UICorner", Frame).CornerRadius = UDim.new(0,18)
 
 local Scale = Instance.new("UIScale", Frame)
 Scale.Scale = 0
 
--- BACKGROUND IMAGE
+-- BACKGROUND
 local BG = Instance.new("ImageLabel", Frame)
 BG.Size = UDim2.new(1.15,0,1.15,0)
 BG.Position = UDim2.new(-0.075,0,-0.075,0)
@@ -50,39 +57,47 @@ BG.BackgroundTransparency = 1
 BG.ScaleType = Enum.ScaleType.Crop
 Instance.new("UICorner", BG).CornerRadius = UDim.new(0,18)
 
--- OVERLAY
 local Overlay = Instance.new("Frame", BG)
 Overlay.Size = UDim2.new(1,0,1,0)
-Overlay.BackgroundColor3 = Color3.new(0,0,0)
+Overlay.BackgroundColor3 = Color3.fromRGB(0,0,0)
 Overlay.BackgroundTransparency = 0.35
 Instance.new("UICorner", Overlay).CornerRadius = UDim.new(0,18)
 
 -- GLOW
-local Stroke = Instance.new("UIStroke", BG)
-Stroke.Color = Color3.fromRGB(190,120,255)
-Stroke.Thickness = 3
-Stroke.Transparency = 0.25
+local Glow = Instance.new("UIStroke", BG)
+Glow.Color = Color3.fromRGB(190,120,255)
+Glow.Thickness = 3
+Glow.Transparency = 0.25
 
--- PULSE
+-- Glow pulsante
 task.spawn(function()
 	while true do
-		TweenService:Create(Stroke,TweenInfo.new(1),{Thickness=6,Transparency=0.1}):Play()
+		TweenService:Create(Glow,TweenInfo.new(1),{Thickness=6,Transparency=0.1}):Play()
 		task.wait(1)
-		TweenService:Create(Stroke,TweenInfo.new(1),{Thickness=3,Transparency=0.35}):Play()
+		TweenService:Create(Glow,TweenInfo.new(1),{Thickness=3,Transparency=0.35}):Play()
 		task.wait(1)
 	end
 end)
 
--- TITLE (ESTE YA NO SE ESCONDE)
+-- TITULO
 local Title = Instance.new("TextLabel", Frame)
-Title.Size = UDim2.new(1,-40,50,0)
-Title.Position = UDim2.new(0,20,0,25)
+Title.Size = UDim2.new(1,-40,0,40)
+Title.Position = UDim2.new(0,20,0,18)
 Title.Text = "MRYETE Key System"
 Title.Font = Enum.Font.GothamBlack
-Title.TextSize = 30
+Title.TextSize = 28
 Title.TextColor3 = Color3.fromRGB(210,150,255)
-Title.TextStrokeTransparency = 0.3
 Title.BackgroundTransparency = 1
+
+-- SUBTITULO
+local Subtitle = Instance.new("TextLabel", Frame)
+Subtitle.Size = UDim2.new(1,-40,0,30)
+Subtitle.Position = UDim2.new(0,20,0,58)
+Subtitle.Text = "Acceso exclusivo"
+Subtitle.Font = Enum.Font.Gotham
+Subtitle.TextSize = 16
+Subtitle.TextColor3 = Color3.fromRGB(180,180,255)
+Subtitle.BackgroundTransparency = 1
 
 -- INPUT
 local Input = Instance.new("TextBox", Frame)
@@ -109,48 +124,67 @@ Instance.new("UICorner", Button).CornerRadius = UDim.new(0,14)
 
 -- STATUS
 local Status = Instance.new("TextLabel", Frame)
-Status.Size = UDim2.new(1,0,26,0)
-Status.Position = UDim2.new(0,0,0.72,0)
+Status.Size = UDim2.new(1,0,0,26)
+Status.Position = UDim2.new(0,0,0.7,0)
 Status.BackgroundTransparency = 1
 Status.Font = Enum.Font.GothamBold
 Status.TextSize = 16
 
--- ENTRANCE
+-- ANIMACIÓN DE ENTRADA
 TweenService:Create(Scale,TweenInfo.new(0.6,Enum.EasingStyle.Back),{Scale=1}):Play()
 TweenService:Create(Blur,TweenInfo.new(0.5),{Size=14}):Play()
 
--- SHAKE ERROR
-local function shake()
-	local p = Frame.Position
-	for i=1,10 do
-		Frame.Position = p + UDim2.new(0,math.random(-12,12),0,0)
-		task.wait(0.02)
-	end
-	Frame.Position = p
+-- DRAG (solo cuando clickeas)
+do
+	local dragging, startPos, startInput
+	Frame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = true
+			startInput = input.Position
+			startPos = Frame.Position
+		end
+	end)
+	UserInputService.InputChanged:Connect(function(input)
+		if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+			local delta = input.Position - startInput
+			Frame.Position = UDim2.new(
+				startPos.X.Scale,
+				startPos.X.Offset + delta.X,
+				startPos.Y.Scale,
+				startPos.Y.Offset + delta.Y
+			)
+		end
+	end)
+	UserInputService.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = false
+		end
+	end)
 end
 
--- VERIFY
+-- ERROR SHAKE
+local function shake()
+	local original = Frame.Position
+	for i=1,10 do
+		Frame.Position = original + UDim2.new(0,math.random(-10,10),0,0)
+		task.wait(0.02)
+	end
+	Frame.Position = original
+end
+
+-- VERIFY LOGIC
 Button.MouseButton1Click:Connect(function()
 	local key = Input.Text
-	for _,v in ipairs(VALID_KEYS) do
-		if key == v then
-			Status.Text = "ACCESS GRANTED ✔"
-			Status.TextColor3 = Color3.fromRGB(80,255,120)
-			task.wait(0.6)
-			TweenService:Create(Blur,TweenInfo.new(0.4),{Size=0}):Play()
-			ScreenGui:Destroy()
-			loadstring(game:HttpGet(MAIN_SCRIPT_URL))()
-			return
-		end
+	if isValidKey(key) then
+		Status.Text = "ACCESS GRANTED ✔"
+		Status.TextColor3 = Color3.fromRGB(80,255,120)
+		task.wait(0.6)
+		TweenService:Create(Blur,TweenInfo.new(0.4),{Size=0}):Play()
+		ScreenGui:Destroy()
+		loadstring(game:HttpGet(MAIN_URL))()
+	else
+		Status.Text = "INVALID KEY ✖"
+		Status.TextColor3 = Color3.fromRGB(255,80,80)
+		shake()
 	end
-	Status.Text = "INVALID KEY ✖"
-	Status.TextColor3 = Color3.fromRGB(255,80,80)
-	shake()
-end)
-
--- PARALLAX
-RunService.RenderStepped:Connect(function()
-	local m = UserInputService:GetMouseLocation()
-	local c = workspace.CurrentCamera.ViewportSize
-	BG.Position = UDim2.new(-0.075+(m.X-c.X/2)/400,0,-0.075+(m.Y-c.Y/2)/400,0)
 end)
