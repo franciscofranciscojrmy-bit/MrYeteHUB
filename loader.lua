@@ -22,11 +22,14 @@ Blur.Size = 0
 -- SCRIPT REAL
 local MAIN_URL = "https://raw.githubusercontent.com/franciscofranciscojrmy-bit/MrYeteHUB/main/main.lua"
 
--- KEYS VALIDAS
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- KEYS LIGADAS A USERID
 local VALID_KEYS = {
-	"MRYETE-2025-ALPHA",
-	"MRYETE-DEV-ACCESS",
-	"MRYETE-PREMIUM-KEYS"
+	["MRYETE-2025-ALPHA"] = 123456789, -- UserId permitido
+	["MRYETE-DEV-ACCESS"] = 987654321,
+	["MRYETE-PREMIUM-KEYS"] = 555666777
 }
 
 local MAX_ATTEMPTS = 3
