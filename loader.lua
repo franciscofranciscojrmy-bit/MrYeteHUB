@@ -1,9 +1,8 @@
 --====================================
--- MRYETE KEY SYSTEM (FULL PRO)
+-- MRYETE KEY SYSTEM (FIXED)
 --====================================
 
 -- SERVICES
-local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
@@ -26,7 +25,6 @@ local VALID_KEYS = {
 	"MRYETE-DEV-ACCESS"
 }
 
--- SEGURIDAD
 local MAX_FAILS = 3
 local LOCK_TIME = 10
 local fails = 0
@@ -54,7 +52,7 @@ Instance.new("UICorner", Main).CornerRadius = UDim.new(0,16)
 local UIScale = Instance.new("UIScale", Main)
 UIScale.Scale = 0
 
--- BG
+-- BACKGROUND
 local BG = Instance.new("ImageLabel", Main)
 BG.Size = UDim2.new(1.15,0,1.15,0)
 BG.Position = UDim2.new(-0.075,0,-0.075,0)
@@ -74,31 +72,17 @@ Glow.Color = Color3.fromRGB(180,80,255)
 Glow.Thickness = 3
 Glow.Transparency = 0.25
 
-task.spawn(function()
-	while true do
-		TweenService:Create(Glow,TweenInfo.new(1),{Thickness=6,Transparency=0.1}):Play()
-		task.wait(1)
-		TweenService:Create(Glow,TweenInfo.new(1),{Thickness=3,Transparency=0.4}):Play()
-		task.wait(1)
-	end
-end)
-
--- SOUNDS
-local OkSound = Instance.new("Sound", ScreenGui)
-OkSound.SoundId = "rbxassetid://6026984224"
-
-local FailSound = Instance.new("Sound", ScreenGui)
-FailSound.SoundId = "rbxassetid://9118823101"
-
--- TITLE
+-- TITLE (🔥 ESTE ES EL QUE FALTABA)
 local Title = Instance.new("TextLabel", Main)
-Title.Size = UDim2.new(1,0,40,0)
-Title.Position = UDim2.new(0,0,0,10)
+Title.Size = UDim2.new(1, -20, 50, 0)
+Title.Position = UDim2.new(0, 10, 0, 20)
 Title.Text = "MRYETE Key System"
 Title.Font = Enum.Font.GothamBlack
-Title.TextSize = 26
-Title.TextColor3 = Color3.fromRGB(200,130,255)
+Title.TextSize = 28
+Title.TextColor3 = Color3.fromRGB(210,150,255)
+Title.TextStrokeTransparency = 0.3
 Title.BackgroundTransparency = 1
+Title.ZIndex = 20
 
 -- INPUT
 local Input = Instance.new("TextBox", Main)
@@ -110,6 +94,7 @@ Input.Font = Enum.Font.Gotham
 Input.TextSize = 18
 Input.TextColor3 = Color3.new(1,1,1)
 Input.BackgroundColor3 = Color3.fromRGB(35,35,50)
+Input.ZIndex = 20
 Instance.new("UICorner", Input).CornerRadius = UDim.new(0,10)
 
 -- BUTTON
@@ -121,6 +106,7 @@ Button.Font = Enum.Font.GothamBold
 Button.TextSize = 18
 Button.TextColor3 = Color3.new(1,1,1)
 Button.BackgroundColor3 = Color3.fromRGB(140,70,200)
+Button.ZIndex = 20
 Instance.new("UICorner", Button).CornerRadius = UDim.new(0,12)
 
 -- STATUS
@@ -130,37 +116,17 @@ Status.Position = UDim2.new(0,0,0.72,0)
 Status.BackgroundTransparency = 1
 Status.Font = Enum.Font.GothamBold
 Status.TextSize = 16
-
--- DRAG
-do
-	local dragging,startPos,startInput
-	Main.InputBegan:Connect(function(i)
-		if i.UserInputType==Enum.UserInputType.MouseButton1 then
-			dragging=true
-			startInput=i.Position
-			startPos=Main.Position
-		end
-	end)
-	UserInputService.InputChanged:Connect(function(i)
-		if dragging and i.UserInputType==Enum.UserInputType.MouseMovement then
-			local d=i.Position-startInput
-			Main.Position=UDim2.new(startPos.X.Scale,startPos.X.Offset+d.X,startPos.Y.Scale,startPos.Y.Offset+d.Y)
-		end
-	end)
-	UserInputService.InputEnded:Connect(function(i)
-		if i.UserInputType==Enum.UserInputType.MouseButton1 then dragging=false end
-	end)
-end
+Status.ZIndex = 20
 
 -- OPEN
 TweenService:Create(UIScale,TweenInfo.new(0.6,Enum.EasingStyle.Back),{Scale=1}):Play()
 TweenService:Create(Blur,TweenInfo.new(0.5),{Size=12}):Play()
 
 -- SHAKE
-local function shake(obj,intensity)
+local function shake(obj)
 	local original = obj.Position
 	for i=1,10 do
-		obj.Position = original + UDim2.new(0,math.random(-intensity,intensity),0,0)
+		obj.Position = original + UDim2.new(0,math.random(-10,10),0,0)
 		task.wait(0.02)
 	end
 	obj.Position = original
@@ -171,7 +137,6 @@ Button.MouseButton1Click:Connect(function()
 	if locked then return end
 
 	if isValidKey(Input.Text) then
-		OkSound:Play()
 		Status.TextColor3 = Color3.fromRGB(80,255,120)
 		Status.Text = "ACCESS GRANTED ✔"
 		task.wait(0.6)
@@ -180,34 +145,8 @@ Button.MouseButton1Click:Connect(function()
 		loadstring(game:HttpGet(MAIN_URL))()
 	else
 		fails += 1
-		FailSound:Play()
-		Status.TextColor3 = Color3.fromRGB(255,60,60)
+		Status.TextColor3 = Color3.fromRGB(255,80,80)
 		Status.Text = "ACCESS DENIED ✖"
-
-		shake(Main,12)
-		shake(Input,8)
-
-		TweenService:Create(Input,TweenInfo.new(0.15),{
-			BackgroundColor3=Color3.fromRGB(130,20,20)
-		}):Play()
-
-		task.delay(0.3,function()
-			TweenService:Create(Input,TweenInfo.new(0.2),{
-				BackgroundColor3=Color3.fromRGB(35,35,50)
-			}):Play()
-		end)
-
-		if fails >= MAX_FAILS then
-			locked = true
-			task.spawn(function()
-				for i=LOCK_TIME,1,-1 do
-					Status.Text = "LOCKED "..i.."s"
-					task.wait(1)
-				end
-				fails = 0
-				locked = false
-				Status.Text = ""
-			end)
-		end
+		shake(Main)
 	end
 end)
