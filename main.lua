@@ -9,13 +9,11 @@ local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
 
 -- BLUR
-local Blur = Instance.new("BlurEffect")
-Blur.Parent = Lighting
+local Blur = Instance.new("BlurEffect", Lighting)
 Blur.Size = 0
 
 -- GUI
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Parent = CoreGui
+local ScreenGui = Instance.new("ScreenGui", CoreGui)
 ScreenGui.DisplayOrder = 999999
 ScreenGui.ResetOnSpawn = false
 
@@ -25,18 +23,13 @@ ClickSound.SoundId = "rbxassetid://12221967"
 ClickSound.Volume = 0.8
 
 -- MAIN FRAME
-local MainFrame = Instance.new("Frame")
-MainFrame.Parent = ScreenGui
-MainFrame.Size = UDim2.new(0,320,0,220)
-MainFrame.Position = UDim2.new(0.5,-160,0.5,-110)
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0,320,0,240)
+MainFrame.Position = UDim2.new(0.5,-160,0.5,-120)
 MainFrame.BackgroundTransparency = 1
 MainFrame.Active = true
-MainFrame.ZIndex = 10
 MainFrame.Visible = true
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0,14)
-
-local UIScale = Instance.new("UIScale", MainFrame)
-UIScale.Scale = 1
 
 -- BACKGROUND
 local BG = Instance.new("ImageLabel", MainFrame)
@@ -53,6 +46,7 @@ Overlay.BackgroundColor3 = Color3.new(0,0,0)
 Overlay.BackgroundTransparency = 0.35
 Instance.new("UICorner", Overlay).CornerRadius = UDim.new(0,14)
 
+-- GLOW
 local Glow = Instance.new("UIStroke", BG)
 Glow.Color = Color3.fromRGB(180,80,255)
 Glow.Thickness = 3
@@ -100,7 +94,25 @@ local function notify(txt)
 	end)
 end
 
--- FLOAT ICON (MÓVIL)
+-- CREDIT (COPY LINK)
+local Credit = Instance.new("TextButton", MainFrame)
+Credit.Size = UDim2.new(1,0,0,32)
+Credit.Position = UDim2.new(0,0,1,-34)
+Credit.BackgroundTransparency = 1
+Credit.Text = "mr_yete | TikTok"
+Credit.Font = Enum.Font.LuckiestGuy
+Credit.TextSize = 26
+Credit.TextColor3 = Color3.fromRGB(190,90,255)
+
+Credit.MouseButton1Click:Connect(function()
+	ClickSound:Play()
+	pcall(function()
+		setclipboard("https://www.tiktok.com/@mr_yete")
+	end)
+	notify("Link copiado")
+end)
+
+-- FLOAT ICON (MINIMIZED)
 local Circle = Instance.new("ImageButton", ScreenGui)
 Circle.Image = "rbxassetid://85542695667199"
 Circle.Size = UDim2.new(0,56,0,56)
@@ -108,24 +120,19 @@ Circle.Position = UDim2.new(0,20,0.5,0)
 Circle.Visible = false
 Circle.BackgroundTransparency = 1
 Instance.new("UICorner", Circle).CornerRadius = UDim.new(1,0)
-local CircleGlow = Instance.new("UIStroke", Circle)
-CircleGlow.Color = Color3.fromRGB(180,120,255)
-CircleGlow.Thickness = 3
 
--- DRAG (PC + MÓVIL)
+-- DRAG (PC + MOBILE)
 local function drag(obj)
 	local dragging, startPos, startInput
 	obj.InputBegan:Connect(function(i)
-		if i.UserInputType == Enum.UserInputType.MouseButton1
-		or i.UserInputType == Enum.UserInputType.Touch then
+		if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
 			dragging = true
 			startPos = obj.Position
 			startInput = i.Position
 		end
 	end)
 	UserInputService.InputChanged:Connect(function(i)
-		if dragging and (i.UserInputType == Enum.UserInputType.MouseMovement
-		or i.UserInputType == Enum.UserInputType.Touch) then
+		if dragging and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
 			local delta = i.Position - startInput
 			obj.Position = UDim2.new(
 				startPos.X.Scale, startPos.X.Offset + delta.X,
@@ -134,8 +141,7 @@ local function drag(obj)
 		end
 	end)
 	UserInputService.InputEnded:Connect(function(i)
-		if i.UserInputType == Enum.UserInputType.MouseButton1
-		or i.UserInputType == Enum.UserInputType.Touch then
+		if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
 			dragging = false
 		end
 	end)
@@ -144,25 +150,42 @@ end
 drag(MainFrame)
 drag(Circle)
 
--- MINIMIZE
+-- 🔽 MINIMIZE BUTTON (AGREGADO)
 local Minimize = Instance.new("ImageButton", MainFrame)
 Minimize.Image = "rbxassetid://6031091002"
 Minimize.Size = UDim2.new(0,34,0,34)
-Minimize.Position = UDim2.new(1,-70,0,8)
-Minimize.BackgroundTransparency = 0.2
+Minimize.Position = UDim2.new(1,-76,0,8)
 Minimize.BackgroundColor3 = Color3.fromRGB(120,0,255)
+Minimize.BackgroundTransparency = 0.2
 Instance.new("UICorner", Minimize).CornerRadius = UDim.new(1,0)
 
 Minimize.MouseButton1Click:Connect(function()
+	ClickSound:Play()
 	MainFrame.Visible = false
 	Circle.Visible = true
 	TweenService:Create(Blur,TweenInfo.new(0.3),{Size=0}):Play()
 end)
 
 Circle.MouseButton1Click:Connect(function()
+	ClickSound:Play()
 	MainFrame.Visible = true
 	Circle.Visible = false
 	TweenService:Create(Blur,TweenInfo.new(0.3),{Size=12}):Play()
+end)
+
+-- CLOSE (DESTROY)
+local Close = Instance.new("ImageButton", MainFrame)
+Close.Image = "rbxassetid://6031094678"
+Close.Size = UDim2.new(0,34,0,34)
+Close.Position = UDim2.new(1,-38,0,8)
+Close.BackgroundColor3 = Color3.fromRGB(255,60,60)
+Close.BackgroundTransparency = 0.15
+Instance.new("UICorner", Close).CornerRadius = UDim.new(1,0)
+
+Close.MouseButton1Click:Connect(function()
+	ClickSound:Play()
+	TweenService:Create(Blur,TweenInfo.new(0.3),{Size=0}):Play()
+	ScreenGui:Destroy()
 end)
 
 -- START BUTTON
@@ -176,68 +199,42 @@ Start.TextColor3 = Color3.new(1,1,1)
 Start.BackgroundColor3 = Color3.fromRGB(140,70,200)
 Instance.new("UICorner", Start).CornerRadius = UDim.new(0,18)
 
-local StartGlow = Instance.new("UIStroke", Start)
-StartGlow.Color = Color3.fromRGB(210,140,255)
-StartGlow.Thickness = 4
-StartGlow.Transparency = 0.15
-
--- SCRIPT LOGIC (ARREGLADO)
+-- SCRIPT LOGIC
 local running = false
-local loopTask = nil
-local brainrotConnection = nil
-
-local function safeTouch(part, hrp)
-	if not running then return end
-	if not part:IsA("BasePart") then return end
-	pcall(function()
-		firetouchinterest(hrp, part, 0)
-		task.wait(0.05)
-		firetouchinterest(hrp, part, 1)
-	end)
-end
+local loopTask
 
 local function startScript()
 	running = true
 	Start.Text = "STOP"
-	notify("Script iniciado correctamente")
-
-	local char = player.Character or player.CharacterAdded:Wait()
-	local hrp = char:WaitForChild("HumanoidRootPart")
+	notify("Script iniciado")
 
 	loopTask = task.spawn(function()
 		while running do
 			local folder = workspace:FindFirstChild("Brainrots")
 			if folder then
-				for _,p in ipairs(folder:GetChildren()) do
-					if not running then break end
-					safeTouch(p, hrp)
+				local char = player.Character
+				local hrp = char and char:FindFirstChild("HumanoidRootPart")
+				if hrp then
+					for _,p in ipairs(folder:GetChildren()) do
+						pcall(function()
+							firetouchinterest(hrp,p,0)
+							task.wait(0.05)
+							firetouchinterest(hrp,p,1)
+						end)
+					end
 				end
 			end
 			task.wait(0.25)
 		end
 	end)
-
-	local folder = workspace:FindFirstChild("Brainrots")
-	if folder then
-		brainrotConnection = folder.ChildAdded:Connect(function(p)
-			task.wait(0.1)
-			safeTouch(p, hrp)
-		end)
-	end
 end
 
 local function stopScript()
 	running = false
 	Start.Text = "START"
 	notify("Script detenido")
-
 	if loopTask then
 		task.cancel(loopTask)
-		loopTask = nil
-	end
-	if brainrotConnection then
-		brainrotConnection:Disconnect()
-		brainrotConnection = nil
 	end
 end
 
@@ -250,6 +247,7 @@ Start.MouseButton1Click:Connect(function()
 	end
 end)
 
--- INICIO AUTOMÁTICO GUI
+-- AUTO SHOW
 TweenService:Create(Blur,TweenInfo.new(0.4),{Size=12}):Play()
 notify("GUI cargada correctamente")
+
