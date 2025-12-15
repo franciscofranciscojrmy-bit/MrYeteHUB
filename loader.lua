@@ -1,5 +1,5 @@
 --====================================
--- MR_Yete HUB | KEY SYSTEM PRO
+-- MRYETE KEY SYSTEM (FULL PRO)
 --====================================
 
 -- SERVICES
@@ -7,8 +7,6 @@ local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
-
-local player = Players.LocalPlayer
 
 -- GUI PARENT
 local GuiParent
@@ -28,19 +26,15 @@ local VALID_KEYS = {
 	"MRYETE-DEV-ACCESS"
 }
 
--- CONFIG SEGURIDAD
+-- SEGURIDAD
 local MAX_FAILS = 3
-local LOCK_TIME = 10 -- segundos
-
+local LOCK_TIME = 10
 local fails = 0
 local locked = false
 
--- FUNCIONES
-local function isValidKey(key)
+local function isValidKey(k)
 	for _,v in ipairs(VALID_KEYS) do
-		if key == v then
-			return true
-		end
+		if k == v then return true end
 	end
 	return false
 end
@@ -60,7 +54,7 @@ Instance.new("UICorner", Main).CornerRadius = UDim.new(0,16)
 local UIScale = Instance.new("UIScale", Main)
 UIScale.Scale = 0
 
--- BACKGROUND
+-- BG
 local BG = Instance.new("ImageLabel", Main)
 BG.Size = UDim2.new(1.15,0,1.15,0)
 BG.Position = UDim2.new(-0.075,0,-0.075,0)
@@ -75,7 +69,6 @@ Overlay.BackgroundColor3 = Color3.new(0,0,0)
 Overlay.BackgroundTransparency = 0.35
 Instance.new("UICorner", Overlay).CornerRadius = UDim.new(0,16)
 
--- GLOW
 local Glow = Instance.new("UIStroke", BG)
 Glow.Color = Color3.fromRGB(180,80,255)
 Glow.Thickness = 3
@@ -91,13 +84,11 @@ task.spawn(function()
 end)
 
 -- SOUNDS
-local SoundOk = Instance.new("Sound", ScreenGui)
-SoundOk.SoundId = "rbxassetid://6026984224"
-SoundOk.Volume = 1
+local OkSound = Instance.new("Sound", ScreenGui)
+OkSound.SoundId = "rbxassetid://6026984224"
 
-local SoundFail = Instance.new("Sound", ScreenGui)
-SoundFail.SoundId = "rbxassetid://9118823101"
-SoundFail.Volume = 1
+local FailSound = Instance.new("Sound", ScreenGui)
+FailSound.SoundId = "rbxassetid://9118823101"
 
 -- TITLE
 local Title = Instance.new("TextLabel", Main)
@@ -142,9 +133,9 @@ Status.TextSize = 16
 
 -- DRAG
 do
-	local dragging, startPos, startInput
+	local dragging,startPos,startInput
 	Main.InputBegan:Connect(function(i)
-		if i.UserInputType == Enum.UserInputType.MouseButton1 then
+		if i.UserInputType==Enum.UserInputType.MouseButton1 then
 			dragging=true
 			startInput=i.Position
 			startPos=Main.Position
@@ -166,40 +157,38 @@ TweenService:Create(UIScale,TweenInfo.new(0.6,Enum.EasingStyle.Back),{Scale=1}):
 TweenService:Create(Blur,TweenInfo.new(0.5),{Size=12}):Play()
 
 -- SHAKE
-local function shake()
-	local original = Main.Position
+local function shake(obj,intensity)
+	local original = obj.Position
 	for i=1,10 do
-		Main.Position = original + UDim2.new(0,math.random(-10,10),0,0)
+		obj.Position = original + UDim2.new(0,math.random(-intensity,intensity),0,0)
 		task.wait(0.02)
 	end
-	Main.Position = original
+	obj.Position = original
 end
 
 -- VERIFY
 Button.MouseButton1Click:Connect(function()
-	if locked then
-		Status.TextColor3 = Color3.fromRGB(255,80,80)
-		Status.Text = "Bloqueado temporalmente"
-		return
-	end
+	if locked then return end
 
 	if isValidKey(Input.Text) then
-		SoundOk:Play()
+		OkSound:Play()
 		Status.TextColor3 = Color3.fromRGB(80,255,120)
-		Status.Text = "KEY CORRECTA ✔"
+		Status.Text = "ACCESS GRANTED ✔"
 		task.wait(0.6)
 		TweenService:Create(Blur,TweenInfo.new(0.4),{Size=0}):Play()
 		ScreenGui:Destroy()
 		loadstring(game:HttpGet(MAIN_URL))()
 	else
 		fails += 1
-		SoundFail:Play()
-		Status.TextColor3 = Color3.fromRGB(255,80,80)
-		Status.Text = "KEY INCORRECTA ("..fails.."/"..MAX_FAILS..")"
-		shake()
+		FailSound:Play()
+		Status.TextColor3 = Color3.fromRGB(255,60,60)
+		Status.Text = "ACCESS DENIED ✖"
+
+		shake(Main,12)
+		shake(Input,8)
 
 		TweenService:Create(Input,TweenInfo.new(0.15),{
-			BackgroundColor3=Color3.fromRGB(120,30,30)
+			BackgroundColor3=Color3.fromRGB(130,20,20)
 		}):Play()
 
 		task.delay(0.3,function()
@@ -210,10 +199,9 @@ Button.MouseButton1Click:Connect(function()
 
 		if fails >= MAX_FAILS then
 			locked = true
-			Status.Text = "Bloqueado "..LOCK_TIME.."s"
 			task.spawn(function()
 				for i=LOCK_TIME,1,-1 do
-					Status.Text = "Bloqueado "..i.."s"
+					Status.Text = "LOCKED "..i.."s"
 					task.wait(1)
 				end
 				fails = 0
