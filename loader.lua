@@ -22,14 +22,10 @@ Blur.Size = 0
 -- SCRIPT REAL
 local MAIN_URL = "https://raw.githubusercontent.com/franciscofranciscojrmy-bit/MrYeteHUB/main/main.lua"
 
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-
--- KEYS LIGADAS A USERID
+-- KEYS VALIDAS
 local VALID_KEYS = {
-	["MRYETE-2025-ALPHA"] = 707706080, -- UserId permitido
-	["MRYETE-DEV-ACCESS"] = 707706080,
-	["MRYETE-PREMIUM-KEYS"] = 123
+	"MRYETE-2025-ALPHA",
+	"MRYETE-DEV-ACCESS"
 }
 
 local MAX_ATTEMPTS = 3
@@ -215,4 +211,3 @@ Button.MouseButton1Click:Connect(function()
 		end
 	end
 end)
-
